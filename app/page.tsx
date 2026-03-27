@@ -100,7 +100,7 @@ export default function Home() {
               {/* Left Column - Upload Area */}
               <Card className="lg:col-span-1 p-6 border border-dashed">
                 <h2 className="text-lg font-semibold">
-                  {t(language, "upload.drag")}
+                  {t(language, "upload.title")}
                 </h2>
                 <UploadArea onFileUpload={handleFileUpload} />
               </Card>
@@ -126,7 +126,7 @@ export default function Home() {
               <div className="lg:col-span-1 space-y-6">
                 <Card className="p-6">
                   <h2 className="text-lg font-semibold">
-                    {t(language, "upload.drag")}
+                    {t(language, "upload.title")}
                   </h2>
                   <UploadArea onFileUpload={handleFileUpload} />
 
