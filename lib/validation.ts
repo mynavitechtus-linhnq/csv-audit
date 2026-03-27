@@ -143,29 +143,30 @@ export function runAudit(
 
 export function parseCSV(fileContent: string): ParsedCSVData | null {
   try {
-    // Simple CSV parser
+    // Simple CSV parser with auto delimiter detection (comma or semicolon)
     const lines = fileContent.split('\n').filter(line => line.trim());
     if (lines.length === 0) return null;
 
+    // Detect delimiter: use semicolon if more in header, else comma
+    const commaCount = (lines[0].match(/,/g) || []).length;
+    const semicolonCount = (lines[0].match(/;/g) || []).length;
+    const delimiter = semicolonCount > commaCount ? ';' : ',';
+
     // Remove quotes from headers and trim
     const headers = lines[0]
-      .split(',')
+      .split(delimiter)
       .map(h => {
         let header = h.trim();
-        // Remove surrounding quotes if present
         if ((header.startsWith('"') && header.endsWith('"')) || 
             (header.startsWith("'") && header.endsWith("'"))) {
           header = header.slice(1, -1);
         }
         return header;
       });
-    
     const rows: Record<string, string>[] = [];
-
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => {
+      const values = lines[i].split(delimiter).map(v => {
         let value = v.trim();
-        // Remove surrounding quotes if present
         if ((value.startsWith('"') && value.endsWith('"')) || 
             (value.startsWith("'") && value.endsWith("'"))) {
           value = value.slice(1, -1);
@@ -173,14 +174,11 @@ export function parseCSV(fileContent: string): ParsedCSVData | null {
         return value;
       });
       const row: Record<string, string> = {};
-
       headers.forEach((header, index) => {
         row[header] = values[index] || '';
       });
-
       rows.push(row);
     }
-
     return { headers, rows };
   } catch {
     return null;
